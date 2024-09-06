@@ -1,4 +1,4 @@
-import React, { useContext } from "react";
+import React, { useContext, useEffect } from "react";
 import { AppContext } from "../../context/AppContext";
 import { useRouter } from "next/router";
 import { supabase } from "../../utils/supabaseClient";
@@ -13,12 +13,17 @@ const Summary = () => {
     clearCart,
   } = useContext(AppContext);
   const router = useRouter();
-  if (!cart) {
-    router.push("/login");
-    return null;
-  }
 
   const isCartEmpty = cart.length === 0;
+
+  useEffect(() => {
+    if (isCartEmpty) {
+      setTimeout(() => {
+        router.push("/");
+      }, 2000);
+    }
+  }, [isCartEmpty, router]);
+
   const handleCheckout = async () => {
     try {
       // Validate form data
@@ -80,6 +85,14 @@ const Summary = () => {
       console.error("Error during checkout:", err.message);
     }
   };
+
+  if (isCartEmpty) {
+    return (
+      <h2 className="mt-56 flex justify-center items-center text-xl pb-96 ">
+        Cart is empty
+      </h2>
+    );
+  }
 
   return (
     <div className="flex flex-col items-center justify-center min-h-screen bg-gradient-to-b from-gray-100 to-gray-300 p-8">
