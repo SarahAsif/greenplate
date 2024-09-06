@@ -4,9 +4,9 @@ import { Paper } from "@mui/material";
 
 const Slider = () => {
   const items = [
-    { src: "./assets/image1.png", alt: "Image 1" },
-    { src: "./assets/image2.png", alt: "Image 2" },
-    { src: "./assets/image3.png", alt: "Image 3" },
+    { src: "./assets/image1.jpg", alt: "Image 1" },
+    { src: "./assets/image2.jpg", alt: "Image 2" },
+    { src: "./assets/image3.jpg", alt: "Image 3" },
   ];
 
   return (
