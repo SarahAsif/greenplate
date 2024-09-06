@@ -1,4 +1,3 @@
-// src/components/Spinner.js
 import React from "react";
 import { ClipLoader } from "react-spinners";
 

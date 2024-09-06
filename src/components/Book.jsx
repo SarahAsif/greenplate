@@ -40,7 +40,7 @@ const Book = ({ data }) => {
         disabled={loading || success} // Disable the button during loading or success state
       >
         {loading ? (
-          <div className="loader ease-linear rounded-full border-4 border-t-4 border-gray-200 h-5 w-5 mr-2"></div> // Show spinner during loading
+          <div className="loader ease-linear rounded-full border-4 border-t-4 border-gray-200 h-5 w-5 mr-2"></div>
         ) : success ? (
           <FaCheckCircle className="text-white text-lg" /> // Show tick after success
         ) : (
