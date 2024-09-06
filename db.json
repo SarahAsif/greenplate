@@ -1,0 +1,56 @@
+{
+  "cities": [
+    {
+      "name": "Gulberg",
+      "areas": [
+        "Gulberg I",
+        "Gulberg II",
+        "Gulberg III",
+        "Gulberg IV",
+        "Main Market"
+      ]
+    },
+    {
+      "name": "DHA",
+      "areas": ["Phase 1", "Phase 2", "Phase 3", "Phase 4", "Phase 5"]
+    },
+    {
+      "name": "Model Town",
+      "areas": ["Block A", "Block B", "Block C", "Block D", "Block E"]
+    },
+    {
+      "name": "Johar Town",
+      "areas": ["Block F", "Block G", "Block H", "Block J", "Block L"]
+    },
+    {
+      "name": "Bahria Town",
+      "areas": ["Sector A", "Sector B", "Sector C", "Sector D", "Sector E"]
+    },
+    {
+      "name": "Garden Town",
+      "areas": ["Block A", "Block B", "Block C", "Block D", "Block E"]
+    },
+    {
+      "name": "Wapda Town",
+      "areas": ["Block A1", "Block B1", "Block C1", "Block D1", "Block E1"]
+    },
+    {
+      "name": "Cantt",
+      "areas": [
+        "Sarwar Road",
+        "R.A. Bazaar",
+        "Saddar",
+        "Allama Iqbal Road",
+        "Tufail Road"
+      ]
+    },
+    {
+      "name": "Shadman",
+      "areas": ["Shadman 1", "Shadman 2", "Shadman 3", "Shadman 4", "Shadman 5"]
+    },
+    {
+      "name": "Faisal Town",
+      "areas": ["Block A", "Block B", "Block C", "Block D", "Block E"]
+    }
+  ]
+}
