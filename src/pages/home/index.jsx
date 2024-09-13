@@ -3,9 +3,11 @@ import React, { useContext, useState, useEffect } from "react";
 import Book from "../../components/Book";
 import { AppContext } from "../../context/AppContext";
 import ShimmerCard from "../../components/ShimmerCard";
-import Slider from "../../components/Slider";
+import { FaSearch } from "react-icons/fa";
+// import Slider from "../../components/Slider";
 
 const categories = [
+  "All",
   "Italian",
   "Mexican",
   "Salads",
@@ -15,7 +17,8 @@ const categories = [
 ];
 
 const Home = () => {
-  const { filteredData, isLoading } = useContext(AppContext);
+  const { filteredData, isLoading, onSearch, searchText } =
+    useContext(AppContext);
   const [selectedCategory, setSelectedCategory] = useState("All");
 
   const scrollToSection = (category) => {
@@ -40,7 +43,7 @@ const Home = () => {
 
   return (
     <>
-      <Slider />
+      {/* <Slider /> */}
 
       <header className="text-center p-8 pt-10 pb-10 bg-green-900 text-white mt-3">
         <h1 className="text-5xl font-bold">
@@ -75,9 +78,22 @@ const Home = () => {
                 : "none",
           }}
         >
+          <div className="flex justify-center items-center mb-4">
+            <div className="relative">
+              <input
+                type="text"
+                placeholder="Search.."
+                value={searchText}
+                onChange={(e) => onSearch(e.target.value)}
+                className="border border-gray-300 rounded-md px-3 py-2 pl-10 focus:outline-none focus:ring focus:ring-indigo-500"
+              />
+              <FaSearch className="absolute left-3 top-3 text-gray-500" />
+            </div>
+          </div>
           <h2 className="text-center text-3xl font-bold mb-6">
             {category} Dishes
           </h2>
+
           <div className="flex flex-wrap justify-center gap-4 text-center">
             {isLoading
               ? Array.from({ length: 6 }).map((_, idx) => (

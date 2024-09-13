@@ -1,8 +1,16 @@
 import React from "react";
-import Carousel from "react-material-ui-carousel";
-import { Paper } from "@mui/material";
+import Slider from "react-slick";
+import { Box, Image } from "@chakra-ui/react";
 
-const Slider = () => {
+const sliderSettings = {
+  dots: true,
+  infinite: true,
+  speed: 500,
+  slidesToShow: 1,
+  slidesToScroll: 1,
+};
+
+const CarouselSlider = () => {
   const items = [
     { src: "./assets/image1.jpg", alt: "Image 1" },
     { src: "./assets/image2.jpg", alt: "Image 2" },
@@ -10,18 +18,22 @@ const Slider = () => {
   ];
 
   return (
-    <Carousel>
-      {items.map((item, index) => (
-        <Paper key={index}>
-          <img
-            src={item.src}
-            alt={item.alt}
-            style={{ width: "100%", height: "auto" }}
-          />
-        </Paper>
-      ))}
-    </Carousel>
+    <Box maxW="container.xl" mx="auto">
+      <Slider {...sliderSettings}>
+        {items.map((item, index) => (
+          <Box key={index} overflow="hidden">
+            <Image
+              src={item.src}
+              alt={item.alt}
+              width="100%"
+              height="auto"
+              objectFit="cover"
+            />
+          </Box>
+        ))}
+      </Slider>
+    </Box>
   );
 };
 
-export default Slider;
+export default CarouselSlider;

@@ -1,14 +1,19 @@
 import React, { useContext } from "react";
 import {
   Drawer,
+  DrawerBody,
+  DrawerFooter,
+  DrawerHeader,
+  DrawerOverlay,
+  DrawerContent,
+  Box,
+  Text,
   List,
   ListItem,
-  ListItemText,
   IconButton,
   Button,
-  Typography,
-} from "@mui/material";
-import { Add, Remove } from "@mui/icons-material";
+} from "@chakra-ui/react";
+import { AddIcon, RemoveIcon, DeleteIcon } from "@chakra-ui/icons";
 import { AppContext } from "../context/AppContext";
 
 const CartSidebar = ({
@@ -18,82 +23,88 @@ const CartSidebar = ({
   onCheckout,
   updateCartItem,
 }) => {
+  const { removeFromCart } = useContext(AppContext);
+
   const getTotalPrice = () => {
     return cartItems
       .reduce((total, item) => total + item.price * item.quantity, 0)
       .toFixed(2);
   };
-  const { removeFromCart } = useContext(AppContext);
+
   return (
-    <Drawer anchor="left" open={open} onClose={onClose}>
-      <div
-        style={{
-          width: 350,
-          padding: "16px",
-          display: "flex",
-          flexDirection: "column",
-          height: "100%",
-        }}
-      >
-        <Typography variant="h6" gutterBottom>
-          Cart
-        </Typography>
-        <List style={{ flex: 1, overflowY: "auto" }}>
-          {cartItems.length > 0 ? (
-            cartItems.map((item, index) => (
-              <ListItem
-                key={index}
-                style={{ display: "flex", alignItems: "center" }}
-              >
-                <ListItemText
-                  primary={item.name}
-                  secondary={`Price: $${item.price} x ${item.quantity}`}
-                />
-                <IconButton
-                  onClick={() =>
-                    updateCartItem(item.id, Math.max(item.quantity - 1, 0))
-                  }
+    <Drawer isOpen={open} onClose={onClose} placement="left">
+      <DrawerOverlay />
+      <DrawerContent>
+        <DrawerHeader borderBottomWidth="1px">Cart</DrawerHeader>
+        <DrawerBody>
+          <List spacing={3}>
+            {cartItems.length > 0 ? (
+              cartItems.map((item, index) => (
+                <ListItem
+                  key={index}
+                  display="flex"
+                  alignItems="center"
+                  justifyContent="space-between"
+                  p={3}
+                  borderBottomWidth="1px"
                 >
-                  <Remove />
-                </IconButton>
-                <IconButton
-                  onClick={() => updateCartItem(item.id, item.quantity + 1)}
-                >
-                  <Add />
-                </IconButton>
-                <button
-                  onClick={() => removeFromCart(item.name)}
-                  className="bg-red-500 text-white px-2 py-1 rounded-md hover:bg-red-600"
-                >
-                  Remove
-                </button>
+                  <Box>
+                    <Text fontWeight="bold">{item.name}</Text>
+                    <Text fontSize="sm">
+                      Price: ${item.price} x {item.quantity}
+                    </Text>
+                    <Text fontSize="sm">
+                      Size: {item.variations?.size || "N/A"}
+                    </Text>
+                    <Text fontSize="sm">
+                      Extras: {item.variations?.extras?.join(", ") || "N/A"}
+                    </Text>
+                  </Box>
+                  <Box>
+                    <IconButton
+                      icon={<RemoveIcon />}
+                      onClick={() =>
+                        updateCartItem(item.id, Math.max(item.quantity - 1, 0))
+                      }
+                      aria-label="Remove item"
+                      mr={2}
+                    />
+                    <IconButton
+                      icon={<AddIcon />}
+                      onClick={() => updateCartItem(item.id, item.quantity + 1)}
+                      aria-label="Add item"
+                      mr={2}
+                    />
+                    <IconButton
+                      icon={<DeleteIcon />}
+                      onClick={() => removeFromCart(item.name)}
+                      aria-label="Delete item"
+                    />
+                  </Box>
+                </ListItem>
+              ))
+            ) : (
+              <ListItem>
+                <Text>No items in cart</Text>
               </ListItem>
-            ))
-          ) : (
-            <ListItem>
-              <ListItemText primary="No items in cart" />
-            </ListItem>
-          )}
-        </List>
-        <div
-          style={{
-            marginTop: "auto",
-            paddingTop: "16px",
-            borderTop: "1px solid #ddd",
-          }}
-        >
-          <Typography variant="h6">Total Price: ${getTotalPrice()}</Typography>
+            )}
+          </List>
+        </DrawerBody>
+        <DrawerFooter borderTopWidth="1px" pt={4}>
+          <Box flex="1" textAlign="left">
+            <Text fontSize="lg" fontWeight="bold">
+              Total Price: ${getTotalPrice()}
+            </Text>
+          </Box>
           <Button
+            colorScheme="blue"
             onClick={onCheckout}
-            variant="contained"
-            color="primary"
-            style={{ width: "100%", marginTop: "16px" }}
-            disabled={cartItems.length === 0}
+            isDisabled={cartItems.length === 0}
           >
             Checkout
           </Button>
-        </div>
-      </div>
+        </DrawerFooter>
+      </DrawerContent>
     </Drawer>
   );
 };

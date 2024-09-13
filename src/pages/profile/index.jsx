@@ -1,15 +1,18 @@
 import React, { useContext, useEffect, useState } from "react";
 import { supabase } from "../../utils/supabaseClient";
 import { AuthContext } from "../../context/AuthContext";
-import {
-  Container,
-  Typography,
-  Card,
-  CardContent,
-  Grid,
-  Paper,
-} from "@mui/material";
 import { useRouter } from "next/router";
+import {
+  Box,
+  Text,
+  Container,
+  Grid,
+  Card,
+  CardBody,
+  CardHeader,
+  Divider,
+  Stack,
+} from "@chakra-ui/react";
 
 const Profile = () => {
   const [profile, setProfile] = useState(null);
@@ -58,56 +61,61 @@ const Profile = () => {
     fetchProfile();
   }, [user, router]);
 
-  if (loading) return <div>Loading...</div>;
-  if (error) return <div>{error}</div>;
+  if (loading)
+    return (
+      <Text mt="36" textAlign="center">
+        Loading...
+      </Text>
+    );
+  if (error)
+    return (
+      <Text mt="36" textAlign="center">
+        {error}
+      </Text>
+    );
 
   return (
-    <Container
-      component="main"
-      maxWidth="md"
-      style={{ marginTop: "9rem", marginBottom: "5rem" }}
-    >
-      <Paper elevation={3} style={{ padding: "2rem" }}>
-        <Typography variant="h4" gutterBottom>
+    <Container maxW="container.md" mt="36" mb="24">
+      <Box p="4" shadow="md" borderWidth="1px" borderRadius="md">
+        <Text fontSize="2xl" fontWeight="bold" mb="4">
           User Profile
-        </Typography>
+        </Text>
         {profile && (
-          <Card variant="outlined">
-            <CardContent>
-              <Grid container spacing={2}>
-                <Grid item xs={12} sm={6}>
-                  <Typography variant="h6">Name:</Typography>
-                  <Typography variant="body1">{profile.name}</Typography>
-                </Grid>
-                <Grid item xs={12} sm={6}>
-                  <Typography variant="h6">Email:</Typography>
-                  <Typography variant="body1">{profile.email}</Typography>
-                </Grid>
-                <Grid item xs={12} sm={6}>
-                  <Typography variant="h6">Address:</Typography>
-                  <Typography variant="body1">{profile.address}</Typography>
-                </Grid>
-                <Grid item xs={12} sm={6}>
-                  <Typography variant="h6">City:</Typography>
-                  <Typography variant="body1">{profile.city}</Typography>
-                </Grid>
-                <Grid item xs={12} sm={6}>
-                  <Typography variant="h6">Area:</Typography>
-                  <Typography variant="body1">{profile.area}</Typography>
-                </Grid>
-                <Grid item xs={12} sm={6}>
-                  <Typography variant="h6">Gender:</Typography>
-                  <Typography variant="body1">{profile.gender}</Typography>
-                </Grid>
-                <Grid item xs={12} sm={6}>
-                  <Typography variant="h6">Phone:</Typography>
-                  <Typography variant="body1">{profile.phone}</Typography>
-                </Grid>
+          <Card variant="outline" borderWidth="1px">
+            <CardHeader>
+              <Text fontSize="lg" fontWeight="bold">
+                Profile Details
+              </Text>
+            </CardHeader>
+            <CardBody>
+              <Grid
+                templateColumns="repeat(auto-fill, minmax(200px, 1fr))"
+                gap="6"
+              >
+                {[
+                  { label: "Name", value: profile.name },
+                  { label: "Email", value: profile.email },
+                  { label: "Address", value: profile.address },
+                  { label: "City", value: profile.city },
+                  { label: "Area", value: profile.area },
+                  { label: "Gender", value: profile.gender },
+                  { label: "Phone", value: profile.phone },
+                ].map((item) => (
+                  <Box
+                    key={item.label}
+                    p="4"
+                    borderWidth="1px"
+                    borderRadius="md"
+                  >
+                    <Text fontWeight="bold">{item.label}:</Text>
+                    <Text>{item.value}</Text>
+                  </Box>
+                ))}
               </Grid>
-            </CardContent>
+            </CardBody>
           </Card>
         )}
-      </Paper>
+      </Box>
     </Container>
   );
 };

@@ -3,16 +3,21 @@ import { useFormik } from "formik";
 import * as Yup from "yup";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { AuthContext } from "../../context/AuthContext"; // Adjust the import based on your project structure
+import { AuthContext } from "../../context/AuthContext";
 import {
-  Container,
-  Typography,
-  TextField,
-  Button,
-  Paper,
   Box,
+  Button,
+  Input,
+  FormControl,
+  FormLabel,
+  FormErrorMessage,
+  Heading,
+  VStack,
   CircularProgress,
-} from "@mui/material";
+  Container,
+  useBreakpointValue,
+} from "@chakra-ui/react";
+
 const Login = () => {
   const { signIn } = useContext(AuthContext);
   const router = useRouter();
@@ -39,67 +44,74 @@ const Login = () => {
   });
 
   return (
-    <Container component="main" maxWidth="xs">
-      <Paper
-        elevation={3}
-        style={{ padding: "2rem", marginTop: "9rem", marginBottom: "5rem" }}
+    <Container maxW="sm" centerContent>
+      <Box
+        p={6}
+        mt={20}
+        mb={20}
+        borderWidth={1}
+        borderRadius="lg"
+        boxShadow="lg"
+        bg="white"
+        width="100%"
       >
-        <Typography variant="h4" align="center" gutterBottom>
+        <Heading as="h1" size="lg" mb={6} textAlign="center">
           Log In
-        </Typography>
+        </Heading>
         <form onSubmit={formik.handleSubmit}>
-          <Box
-            display="flex"
-            flexDirection="column"
-            alignItems="center"
-            gap={2}
-          >
-            <TextField
-              name="email"
-              label="Email Address"
-              type="email"
-              variant="outlined"
-              fullWidth
-              onChange={formik.handleChange}
-              onBlur={formik.handleBlur}
-              value={formik.values.email}
-              error={formik.touched.email && Boolean(formik.errors.email)}
-              helperText={formik.touched.email && formik.errors.email}
-            />
-            <TextField
-              name="password"
-              label="Password"
-              type="password"
-              variant="outlined"
-              fullWidth
-              onChange={formik.handleChange}
-              onBlur={formik.handleBlur}
-              value={formik.values.password}
-              error={formik.touched.password && Boolean(formik.errors.password)}
-              helperText={formik.touched.password && formik.errors.password}
-            />
+          <VStack spacing={4}>
+            <FormControl
+              isInvalid={formik.touched.email && Boolean(formik.errors.email)}
+            >
+              <FormLabel htmlFor="email">Email Address</FormLabel>
+              <Input
+                id="email"
+                name="email"
+                type="email"
+                variant="outline"
+                onChange={formik.handleChange}
+                onBlur={formik.handleBlur}
+                value={formik.values.email}
+              />
+              <FormErrorMessage>
+                {formik.touched.email && formik.errors.email}
+              </FormErrorMessage>
+            </FormControl>
+            <FormControl
+              isInvalid={
+                formik.touched.password && Boolean(formik.errors.password)
+              }
+            >
+              <FormLabel htmlFor="password">Password</FormLabel>
+              <Input
+                id="password"
+                name="password"
+                type="password"
+                variant="outline"
+                onChange={formik.handleChange}
+                onBlur={formik.handleBlur}
+                value={formik.values.password}
+              />
+              <FormErrorMessage>
+                {formik.touched.password && formik.errors.password}
+              </FormErrorMessage>
+            </FormControl>
             <Button
               type="submit"
-              variant="contained"
-              color="success"
-              fullWidth
-              disabled={!(formik.isValid && formik.dirty)}
+              colorScheme="teal"
+              width="full"
+              isDisabled={!(formik.isValid && formik.dirty)}
             >
               {formik.isSubmitting ? <CircularProgress size={24} /> : "Log In"}
             </Button>
-            <Link href="/signup" style={{ textDecoration: "none" }}>
-              <Button
-                variant="outlined"
-                color="success"
-                fullWidth
-                style={{ marginTop: "1rem" }}
-              >
+            <Link href="/signup" passHref>
+              <Button variant="outline" colorScheme="teal" width="full" mt={4}>
                 Sign Up
               </Button>
             </Link>
-          </Box>
+          </VStack>
         </form>
-      </Paper>
+      </Box>
     </Container>
   );
 };

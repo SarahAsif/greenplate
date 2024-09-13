@@ -1,19 +1,23 @@
-import "../styles/globals.css"; // Import global CSS
-import { AppProvider } from "../context/AppContext"; // Import your context provider
-import { AuthProvider } from "../context/AuthContext"; // Import your context provider
-import { Provider } from "react-redux"; // Import Redux provider
-import Layout from "../components/Layout"; // Import Layout component
+import "../styles/globals.css";
+import { AppProvider } from "../context/AppContext";
+import { AuthProvider } from "../context/AuthContext";
+import Layout from "../components/Layout";
+import ErrorBoundary from "../components/ErrorBoundary";
+import { ChakraProvider } from "@chakra-ui/react";
 
-// This is the custom App component
 function MyApp({ Component, pageProps }) {
   return (
-    <AuthProvider>
-      <AppProvider>
-        <Layout>
-          <Component {...pageProps} /> {/* Render the page component */}
-        </Layout>
-      </AppProvider>
-    </AuthProvider>
+    <ErrorBoundary>
+      <AuthProvider>
+        <AppProvider>
+          <Layout>
+            <ChakraProvider>
+              <Component {...pageProps} />
+            </ChakraProvider>
+          </Layout>
+        </AppProvider>
+      </AuthProvider>
+    </ErrorBoundary>
   );
 }
 

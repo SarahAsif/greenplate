@@ -3,13 +3,15 @@ import { supabase } from "../../utils/supabaseClient";
 import { AuthContext } from "../../context/AuthContext";
 import { useRouter } from "next/router";
 import {
-  Card,
-  CardContent,
-  Typography,
   Box,
+  Text,
   Grid,
+  Card,
+  CardHeader,
+  CardBody,
   Divider,
-} from "@mui/material";
+  Flex,
+} from "@chakra-ui/react";
 import { AppContext } from "../../context/AppContext";
 
 const OrderHistory = () => {
@@ -52,56 +54,55 @@ const OrderHistory = () => {
   }, [user]);
 
   if (loading) {
-    return <div className="mt-36">NOt loagind</div>; // Show spinner while loading
+    return (
+      <Text mt="36" textAlign="center">
+        Loading...
+      </Text>
+    ); // Show spinner while loading
   }
 
   return (
-    <Box
-      sx={{ padding: "16px", maxWidth: "1200px", margin: "auto" }}
-      className="mt-36"
-    >
-      <Typography variant="h4" fontWeight="bold" gutterBottom>
+    <Box p="16px" maxW="1200px" mx="auto" mt="36">
+      <Text fontSize="2xl" fontWeight="bold" mb="4">
         Order History
-      </Typography>
+      </Text>
       {orders.length === 0 ? (
-        <Typography variant="body1">No orders found.</Typography>
+        <Text>No orders found.</Text>
       ) : (
-        <Grid container spacing={3}>
+        <Grid templateColumns="repeat(auto-fit, minmax(300px, 1fr))" gap="6">
           {orders.map((order) => (
-            <Grid item xs={12} sm={6} md={4} key={order.id}>
-              <Card variant="outlined" sx={{ boxShadow: 3 }}>
-                <CardContent>
-                  <Typography variant="h6" fontWeight="bold">
-                    Order ID: {order.id}
-                  </Typography>
-                  <Typography variant="body2" color="textSecondary">
-                    Date: {new Date(order.created_at).toLocaleDateString()}
-                  </Typography>
-                  <Typography variant="body2" color="textSecondary">
-                    Total Amount: ${order.total_amount}
-                  </Typography>
-                  <Divider sx={{ my: 2 }} />
-                  <Typography variant="subtitle1" fontWeight="bold">
-                    Items:
-                  </Typography>
-                  {order.order_items.map((item, index) => (
-                    <Box
-                      key={index}
-                      sx={{
-                        display: "flex",
-                        justifyContent: "space-between",
-                        mt: 1,
-                      }}
-                    >
-                      <Typography variant="body2">{item.name}</Typography>
-                      <Typography variant="body2">
-                        {item.quantity} x ${item.price}
-                      </Typography>
-                    </Box>
-                  ))}
-                </CardContent>
-              </Card>
-            </Grid>
+            <Card key={order.id} variant="outline" boxShadow="md">
+              <CardHeader>
+                <Text fontSize="lg" fontWeight="bold">
+                  Order ID: {order.id}
+                </Text>
+                <Text fontSize="sm" color="gray.500">
+                  Date: {new Date(order.created_at).toLocaleDateString()}
+                </Text>
+                <Text fontSize="sm" color="gray.500">
+                  Total Amount: ${order.total_amount}
+                </Text>
+              </CardHeader>
+              <CardBody>
+                <Divider my="2" />
+                <Text fontSize="md" fontWeight="bold" mb="2">
+                  Items:
+                </Text>
+                {order.order_items.map((item, index) => (
+                  <Flex
+                    key={index}
+                    justify="space-between"
+                    mt="2"
+                    align="center"
+                  >
+                    <Text fontSize="sm">{item.name}</Text>
+                    <Text fontSize="sm">
+                      {item.quantity} x ${item.price}
+                    </Text>
+                  </Flex>
+                ))}
+              </CardBody>
+            </Card>
           ))}
         </Grid>
       )}

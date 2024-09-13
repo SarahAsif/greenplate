@@ -21,119 +21,52 @@ export const AppProvider = ({ children }) => {
   const [area, setArea] = useState("");
   const [locations, setLocations] = useState([]);
   const [areas, setAreas] = useState([]);
-  const [searchOpen, setSearchOpen] = useState(false);
   const [cartOpen, setCartOpen] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [selectedVariations, setSelectedVariations] = useState({
+    size: "",
+    extras: [],
+  });
   const router = useRouter();
 
   const fetchDishes = async () => {
     setIsLoading(true);
-    const { data, error } = await supabase.from("recipes").select("*");
-    if (error) {
-      console.error("Error fetching dishes:", error.message);
-    } else {
-      console.log("Fetched Dishes:", data); // Check fetched data
+    try {
+      const { data, error } = await supabase.from("products").select("*");
+      if (error) {
+        throw error;
+      }
       setDishes(data);
+    } catch (error) {
+      console.error("Error fetching dishes:", error.message);
     }
     setIsLoading(false);
   };
 
-  useEffect(() => {
-    fetchDishes();
-  }, []);
-
-  useEffect(() => {
-    console.log("Dishes:", dishes);
-    console.log("Search Text:", searchText);
-    console.log("Filtered Data:", filteredData);
-    setFilteredData(
-      dishes.filter((d) =>
-        d.name.toLowerCase().includes(searchText.toLowerCase())
-      )
-    );
-  }, [dishes, searchText]);
-
-  useEffect(() => {
-    setIsLoading(true);
-    setTimeout(() => {
-      setIsLoading(false);
-    }, 1000);
-  }, []);
-
-  const onSearch = (text) => {
-    setSearchText(text);
+  const fetchCities = async () => {
+    try {
+      const response = await fetch("/db.json");
+      const data = await response.json();
+      setLocations(data.cities || []);
+    } catch (error) {
+      console.error("Error fetching cities:", error);
+    }
   };
-  const addToCart = (item) => {
-    setCart((prevCart) => {
-      const itemIndex = prevCart.findIndex(
-        (cartItem) => cartItem.name === item.name
-      );
 
-      let updatedCart;
-      if (itemIndex >= 0) {
-        updatedCart = [...prevCart];
-        updatedCart[itemIndex].quantity += 1;
-      } else {
-        updatedCart = [...prevCart, { ...item, quantity: 1 }];
-      }
-
-      // Save updated cart to localStorage
-      localStorage.setItem("cart", JSON.stringify(updatedCart));
-      return updatedCart;
-    });
-  };
   useEffect(() => {
     const storedCart = localStorage.getItem("cart");
     if (storedCart) {
       setCart(JSON.parse(storedCart));
     }
   }, []);
-  const clearCart = () => {
-    setCart([]); // Clear the cart state
-    localStorage.removeItem("cart"); // Remove cart from localStorage
-  };
-  const removeFromCart = (items) => {
-    setCart((prev) => prev.filter((i) => i.name !== items));
-  };
 
-  const updateCartQuantity = (itemName, quantity) => {
-    setCart((prev) =>
-      prev.map((i) => (i.name === itemName ? { ...i, quantity } : i))
-    );
-  };
-
-  const calculateTotal = () => {
-    return cart.reduce((total, item) => total + item.price * item.quantity, 0);
-  };
-
-  const Delivery = () => {
-    return calculateTotal() + 20;
-  };
-
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    setPrice(formData.price);
-    setSubmittedData(formData);
-  };
-  //header things:
   useEffect(() => {
-    const fetchCities = async () => {
-      try {
-        const response = await fetch("/db.json");
-        const data = await response.json();
-        setLocations(data.cities || []);
-      } catch (error) {
-        console.error("Error fetching cities:", error);
-      }
-    };
-
     fetchCities();
   }, []);
 
   useEffect(() => {
     const storedLocation = localStorage.getItem("userLocation");
     const storedArea = localStorage.getItem("userArea");
-
     if (storedLocation && storedArea) {
       setLocation(storedLocation);
       setArea(storedArea);
@@ -148,6 +81,87 @@ export const AppProvider = ({ children }) => {
     }
   }, [location, locations]);
 
+  useEffect(() => {
+    fetchDishes();
+  }, []);
+
+  useEffect(() => {
+    setFilteredData(
+      dishes.filter((d) =>
+        d.name.toLowerCase().includes(searchText.toLowerCase())
+      )
+    );
+  }, [dishes, searchText]);
+
+  useEffect(() => {
+    setIsLoading(true);
+    setTimeout(() => {
+      setIsLoading(false);
+    }, 1000);
+  }, []);
+
+  const onSearch = (text) => setSearchText(text);
+
+  const addToCart = (item) => {
+    setCart((prevCart) => {
+      const itemIndex = prevCart.findIndex(
+        (cartItem) => cartItem.name === item.name
+      );
+      let updatedCart;
+      if (itemIndex >= 0) {
+        updatedCart = [...prevCart];
+        updatedCart[itemIndex].quantity += 1;
+      } else {
+        updatedCart = [
+          ...prevCart,
+          {
+            ...item,
+            quantity: 1,
+            selectedVariations: { ...selectedVariations },
+          },
+        ];
+      }
+      localStorage.setItem("cart", JSON.stringify(updatedCart));
+      return updatedCart;
+    });
+  };
+
+  const clearCart = () => {
+    setCart([]);
+    localStorage.removeItem("cart");
+  };
+  const removeFromCart = (itemName) => {
+    setCart((prev) => prev.filter((item) => item.name !== itemName));
+  };
+
+  const updateCartQuantity = (itemName, quantity) => {
+    setCart((prev) =>
+      prev.reduce((updatedCart, item) => {
+        if (item.name === itemName) {
+          if (quantity > 0) {
+            return [...updatedCart, { ...item, quantity }];
+          } else {
+            return updatedCart;
+          }
+        } else {
+          return [...updatedCart, item];
+        }
+      }, [])
+    );
+  };
+
+  const calculateTotal = () => {
+    return cart.reduce((total, item) => total + item.price * item.quantity, 0);
+  };
+
+  const Delivery = () => calculateTotal() + 20;
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    setPrice(formData.price);
+    setSubmittedData(formData);
+  };
+
   const handleLocationSubmit = () => {
     if (location && area) {
       localStorage.setItem("userLocation", location);
@@ -158,30 +172,20 @@ export const AppProvider = ({ children }) => {
     }
   };
 
-  const handleSearchClick = () => {
-    setSearchOpen(!searchOpen);
+  const handleProfileMenuOpen = () => {
+    setDropdownOpen((prev) => !prev); // Toggles the dropdownOpen state
   };
 
-  const handleProfileMenuOpen = (event) => {
-    setDropdownOpen(event.currentTarget);
-  };
-
-  const handleMenuClose = () => {
-    setDropdownOpen(null);
-  };
+  const handleMenuClose = () => setDropdownOpen(null);
 
   const handleLogout = async () => {
     await logout();
     router.push("/");
   };
 
-  const handleCartOpen = () => {
-    setCartOpen(true);
-  };
+  const handleCartOpen = () => setCartOpen(true);
 
-  const handleCartClose = () => {
-    setCartOpen(false);
-  };
+  const handleCartClose = () => setCartOpen(false);
 
   const handleCheckout = () => {
     router.push("/contact");
@@ -199,9 +203,8 @@ export const AppProvider = ({ children }) => {
     }
   };
 
-  const toggleMobileMenu = () => {
-    setMobileMenuOpen(!mobileMenuOpen);
-  };
+  const toggleMobileMenu = () => setMobileMenuOpen(!mobileMenuOpen);
+
   const cartItemCount = cart.reduce((total, item) => total + item.quantity, 0);
 
   return (
@@ -242,9 +245,6 @@ export const AppProvider = ({ children }) => {
         cartOpen,
         setCartOpen,
         cartItemCount,
-        searchOpen,
-        setSearchOpen,
-        handleSearchClick,
         handleProfileMenuOpen,
         dropdownOpen,
         handleMenuClose,
@@ -257,6 +257,9 @@ export const AppProvider = ({ children }) => {
         toggleMobileMenu,
         mobileMenuOpen,
         clearCart,
+        onSearch,
+        selectedVariations,
+        setSelectedVariations,
       }}
     >
       {children}

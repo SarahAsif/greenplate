@@ -1,11 +1,9 @@
-// src/components/Layout.js
-
-import Header from "./Header";
 import Footer from "./Footer";
+import NavBar from "./Navbar";
 
 const Layout = ({ children }) => (
   <>
-    <Header />
+    <NavBar />
     <main>{children}</main>
     <Footer />
   </>
